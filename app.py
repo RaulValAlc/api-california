@@ -1,13 +1,26 @@
 from flask import Flask, request, jsonify
 import joblib
 import numpy as np
+import os
+import urllib.request
 
 app = Flask(__name__)
-modelo = joblib.load('modelo_california.pkl')
+
+# fragmento del ejercicio 8
+MODELO_PATH = 'modelo_california.pkl'
+URL_MODELO = 'https://github.com/RaulValAlc/api-california/raw/refs/heads/main/modelo_california.pkl'
+
+if not os.path.exists(MODELO_PATH):
+    print("Modelo no encontrado en local. Descargando desde GitHub...")
+    urllib.request.urlretrieve(URL_MODELO, MODELO_PATH)
+    print("Descarga completada.")
+# ---------------------------------
+
+modelo = joblib.load(MODELO_PATH)
 
 @app.route('/', methods=['GET'])
 def health_check():
-    return jsonify({"status": "ok", "message": "API funcionando"})
+    return jsonify({"status": "ok", "message": "API funcionando correctamente"})
 
 @app.route('/predict', methods=['POST'])
 def predict():
